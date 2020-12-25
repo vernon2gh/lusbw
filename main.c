@@ -1,31 +1,66 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "list.h"
 
-void separate_words(unsigned char *buf)
+struct list_head *separate_words(unsigned char *buf)
 {
     unsigned char *word;
     unsigned char tmp[256];
     int i = 0, j = 0, size;
+    struct list_head *shead = NULL, *whead = NULL;
 
     memset(tmp, 0, sizeof(tmp));
 
+    shead = malloc(sizeof(struct list_head));
+    INIT_LIST_HEAD(shead);
+
     for(i=0; i<strlen(buf); i++)
     {
-        if((buf[i] == ' ') || (buf[i] == ',') || (buf[i] == '.') || (buf[i] == ';') || (buf[i] == '\n')) {
+        if((buf[i] == ' ') || (buf[i] == '\n') || (buf[i] == ',') || (buf[i] == '.') || (buf[i] == ';'))
+        {
+            if(j == 0)
+                continue;
+
+            if (whead == NULL) {
+                whead = malloc(sizeof(struct list_head));
+                INIT_LIST_HEAD(whead);
+            }
+
             size = j;
             word = malloc(size);
             strncpy(word, tmp, size);
-            // store to `list`
-            printf("%s ", word);
+            word_enqueue(whead, word);
+
+            if((buf[i] == ',') || (buf[i] == '.') || (buf[i] == ';'))
+            {
+                sentences_enqueue(shead, whead);
+                whead = NULL;
+            }
 
             memset(tmp, 0, sizeof(tmp));
             j = 0;
         }
-        else {
+        else
+        {
             tmp[j] = buf[i];
             j++;
         }
+    }
+
+    return shead;
+}
+
+void print_word(struct list_head *shead)
+{
+    struct list_sentences *stmp;
+    struct list_word *wtmp;
+
+    list_for_each_entry(stmp, shead, list) {
+        list_for_each_entry(wtmp, stmp->whead, list) {
+            printf("%s ", wtmp->word);
+        }
+        printf("\n");
     }
 }
 
@@ -33,6 +68,7 @@ int main(int argc, unsigned char **argv)
 {
     FILE *fstream;
     unsigned char buf[4096];
+    struct list_head *shead;
 
     if(argc != 2)
     {
@@ -56,7 +92,9 @@ int main(int argc, unsigned char **argv)
             return -1;
         }
 
-        separate_words(buf);
+        shead = separate_words(buf);
+        print_word(shead);
+
         if (feof(fstream))
         {
             // printf("detect EOF flag.\n");
