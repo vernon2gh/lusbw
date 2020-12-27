@@ -2,7 +2,6 @@
 #define __LIST_H__
 
 #include <stddef.h>
-#include <stdlib.h>
 
 /*
  * Simple doubly linked list implementation.
@@ -102,35 +101,5 @@ static inline void list_add_tail(struct list_head *new, struct list_head *head)
         for (pos = list_entry((head)->next, typeof(*pos), member);      \
              prefetch(pos->member.next), &pos->member != (head);        \
              pos = list_entry(pos->member.next, typeof(*pos), member))
-
-
-/******************************************************************************/
-struct list_word {
-    unsigned char *word;
-    struct list_head list;
-};
-
-struct list_sentences {
-    struct list_head *whead;
-    struct list_head list;
-};
-
-void sentences_enqueue(struct list_head *head, struct list_head *whead)
-{
-    struct list_sentences *new;
-
-    new = malloc(sizeof(struct list_sentences));
-    new->whead = whead;
-    list_add_tail(&new->list, head);
-}
-
-void word_enqueue(struct list_head *head, unsigned char *word)
-{
-    struct list_word *new;
-
-    new = malloc(sizeof(struct list_word));
-    new->word = word;
-    list_add_tail(&new->list, head);
-}
 
 #endif
