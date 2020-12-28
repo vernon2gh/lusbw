@@ -5,12 +5,12 @@ int main(int argc, unsigned char **argv)
 {
     FILE *fstream;
     unsigned char buf[4096];
-    struct list_head *shead;
+    struct list_head *shead, *thead;
     int i;
 
     if(argc < 2)
     {
-        printf("[usage]: %s <filename>\n", argv[0]);
+        printf("[usage]: %s <resource> <target>\n", argv[0]);
         return -1;
     }
 
@@ -32,8 +32,14 @@ int main(int argc, unsigned char **argv)
                 return -1;
             }
 
-            shead = separate_words(buf);
-            print_word(shead);
+            if(i < (argc-1)) {
+                shead = separate_words(buf);
+                print_word(shead);
+            }
+            else {
+                thead = separate_words(buf);
+                print_word(thead);
+            }
 
             if (feof(fstream))
             {
