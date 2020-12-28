@@ -20,5 +20,6 @@ struct list_sentences {
 extern int separate_words(struct list_head **head, unsigned char *buf);
 extern void print_word(struct list_head *shead);
 extern void compare_word(struct list_head *shead, struct list_head *thead);
+extern int save_sentences(struct list_head *shead);
 
 #endif

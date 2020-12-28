@@ -93,11 +93,51 @@ void compare_word(struct list_head *shead, struct list_head *thead)
             list_for_each_entry(ttmp, thead, list) {
                 list_for_each_entry(wttmp, ttmp->whead, list) {
                     if(!strcmp(wstmp->word, wttmp->word)) {
-                        printf("%s %s\n", wstmp->word, wttmp->word);
+                        // printf("%s %s\n", wstmp->word, wttmp->word);
                         stmp->hit_number++;
                     }
                 }
             }
         }
     }
+}
+
+int save_sentences(struct list_head *shead)
+{
+    struct list_sentences *stmp;
+    struct list_word *wstmp;
+    FILE *fstream;
+    unsigned char buf[4096];
+    int size, i=0;
+
+    fstream = fopen("output.txt", "w");
+    if(fstream == NULL) {
+        printf("Open output.txt file failed\n");
+        return -1;
+    }
+
+    list_for_each_entry(stmp, shead, list) {
+        memset(buf, 0, sizeof(buf));
+
+        if(stmp->hit_number) {
+            list_for_each_entry(wstmp, stmp->whead, list) {
+                size = strlen(wstmp->word);
+                strncpy(buf+i, wstmp->word, size);
+                i += size;
+                buf[i] = ' ';
+                i++;
+            }
+            buf[i] = '\n';
+
+            fwrite(buf, 512, 8, fstream); // write 8 item, each 512 bytes. totals is 4096 bytes.
+            if(ferror(fstream)) {
+                printf("write output.txt file failed.\n");
+                return -1;
+            }
+        }
+    }
+
+    fclose(fstream);
+
+    return 0;
 }

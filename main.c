@@ -49,9 +49,10 @@ int main(int argc, unsigned char **argv)
         fclose(fstream);
     }
 
-    print_word(shead);
-    print_word(thead);
+    // print_word(shead);
+    // print_word(thead);
     compare_word(shead, thead);
+    save_sentences(shead);
 
     return 0;
 }

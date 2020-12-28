@@ -7,4 +7,4 @@ all : $(objs)
 	gcc -g -c -o $@  $<
 
 clean:
-	rm -fr main *.o
+	rm -fr main *.o output.txt
