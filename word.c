@@ -108,29 +108,34 @@ int save_sentences(struct list_head *shead)
     struct list_word *wstmp;
     FILE *fstream;
     unsigned char buf[4096];
-    int size, i=0;
+    int size, i;
 
     fstream = fopen("output.txt", "w");
-    if(fstream == NULL) {
+    if(fstream == NULL)
+    {
         printf("Open output.txt file failed\n");
         return -1;
     }
 
-    list_for_each_entry(stmp, shead, list) {
+    list_for_each_entry(stmp, shead, list)
+    {
         memset(buf, 0, sizeof(buf));
+        i = 0;
 
-        if(stmp->hit_number) {
-            list_for_each_entry(wstmp, stmp->whead, list) {
+        if(stmp->hit_number)
+	{
+            list_for_each_entry(wstmp, stmp->whead, list)
+	    {
                 size = strlen(wstmp->word);
                 strncpy(buf+i, wstmp->word, size);
                 i += size;
-                buf[i] = ' ';
-                i++;
+                buf[i++] = ' ';
             }
-            buf[i] = '\n';
+            buf[i++] = '\n';
 
-            fwrite(buf, 512, 8, fstream); // write 8 item, each 512 bytes. totals is 4096 bytes.
-            if(ferror(fstream)) {
+            fwrite(buf, i, 1, fstream);
+            if(ferror(fstream))
+	    {
                 printf("write output.txt file failed.\n");
                 return -1;
             }
