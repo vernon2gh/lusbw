@@ -5,7 +5,7 @@ int main(int argc, unsigned char **argv)
 {
     FILE *fstream;
     unsigned char buf[4096];
-    struct list_head *shead, *thead;
+    struct list_head *shead=NULL, *thead=NULL;
     int i;
 
     if(argc < 2)
@@ -33,12 +33,10 @@ int main(int argc, unsigned char **argv)
             }
 
             if(i < (argc-1)) {
-                shead = separate_words(buf);
-                print_word(shead);
+                separate_words(&shead, buf);
             }
             else {
-                thead = separate_words(buf);
-                print_word(thead);
+                separate_words(&thead, buf);
             }
 
             if (feof(fstream))
@@ -50,6 +48,10 @@ int main(int argc, unsigned char **argv)
 
         fclose(fstream);
     }
+
+    print_word(shead);
+    print_word(thead);
+    compare_word(shead, thead);
 
     return 0;
 }

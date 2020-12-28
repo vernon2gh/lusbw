@@ -18,17 +18,21 @@ void word_enqueue(struct list_head *head, unsigned char *word)
     list_add_tail(&new->list, head);
 }
 
-struct list_head *separate_words(unsigned char *buf)
+int separate_words(struct list_head **head, unsigned char *buf)
 {
     unsigned char *word;
     unsigned char tmp[256];
     int i = 0, j = 0, size;
-    struct list_head *shead = NULL, *whead = NULL;
+    struct list_head *shead = *head, *whead = NULL;
 
     memset(tmp, 0, sizeof(tmp));
 
-    shead = malloc(sizeof(struct list_head));
-    INIT_LIST_HEAD(shead);
+    if(shead == NULL)
+    {
+        shead = malloc(sizeof(struct list_head));
+        INIT_LIST_HEAD(shead);
+        *head = shead;
+    }
 
     for(i=0; i<strlen(buf); i++)
     {
@@ -63,7 +67,7 @@ struct list_head *separate_words(unsigned char *buf)
         }
     }
 
-    return shead;
+    return 0;
 }
 
 void print_word(struct list_head *shead)
@@ -76,5 +80,24 @@ void print_word(struct list_head *shead)
             printf("%s ", wtmp->word);
         }
         printf("\n");
+    }
+}
+
+void compare_word(struct list_head *shead, struct list_head *thead)
+{
+    struct list_sentences *stmp, *ttmp;
+    struct list_word *wstmp, *wttmp;
+
+    list_for_each_entry(stmp, shead, list) {
+        list_for_each_entry(wstmp, stmp->whead, list) {
+            list_for_each_entry(ttmp, thead, list) {
+                list_for_each_entry(wttmp, ttmp->whead, list) {
+                    if(!strcmp(wstmp->word, wttmp->word)) {
+                        printf("%s %s\n", wstmp->word, wttmp->word);
+                        stmp->hit_number++;
+                    }
+                }
+            }
+        }
     }
 }

@@ -1,10 +1,10 @@
 objs := main.o word.o
 
 all : $(objs)
-	gcc -g -o main $^
+	gcc -o main $^
 
 %.o : %.c
-	gcc -c -o $@  $<
+	gcc -g -c -o $@  $<
 
 clean:
 	rm -fr main *.o
